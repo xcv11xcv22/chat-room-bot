@@ -1,0 +1,46 @@
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+*.pyd
+
+# Virtual environment
+venv/
+.env/
+.venv/
+
+model/
+
+# VSCode settings
+.vscode/
+
+# Python package files
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Model files
+*.safetensors
+*.pt
+*.ckpt
+
+# Hugging Face cache or token files
+~/.huggingface/
+*.huggingface*
+
+# Docker ignore
+DockerfileCpu
+Dockerfile
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Logs and local dev files
+*.log
+*.tmp
+
+# OS-specific
+.DS_Store
+Thumbs.db
