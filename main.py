@@ -38,14 +38,19 @@ class MessageModel(BaseModel):
 
 app = FastAPI()
 settings = Settings()
-
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # 模型加載
 model_path = "./model"
 tokenizer = AutoTokenizer.from_pretrained(model_path)
-model = AutoModelForCausalLM.from_pretrained(model_path, device_map="auto")
+# model = AutoModelForCausalLM.from_pretrained(model_path, device_map="auto")
+dtype = torch.float16 if device.type == "cuda" else torch.float32
+model = (AutoModelForCausalLM
+         .from_pretrained(model_path, torch_dtype=dtype)
+         .to(device))     
+print({name: p.device for name, p in list(model.named_parameters())[:5]})
 
-login=os.getenv("RABBITMQ_USER", "guest"),
-password=os.getenv("RABBITMQ_PASS", "guest"),
+# login=os.getenv("RABBITMQ_USER", "guest"),
+# password=os.getenv("RABBITMQ_PASS", "guest")
 
 # # RabbitMQ 連接資訊
 
@@ -93,11 +98,10 @@ async def test():
 @app.post('/generate')
 async def send_to_rabbitmq(data: MessageModel):
     print(f'收到{data.prompt}')
+
     input_text = f"<s>[INST] {data.prompt} [/INST]"
     async def run_generation(prompt: str):
  
-        
-        device = "cuda" if torch.cuda.is_available() else "cpu"
         def do_inference():
             inputs = tokenizer(prompt, return_tensors="pt").to(device)
 
